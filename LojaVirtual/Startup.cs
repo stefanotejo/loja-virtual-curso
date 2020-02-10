@@ -50,8 +50,19 @@ namespace LojaVirtual
             }
 
             app.UseHttpsRedirection();
+            app.UseDefaultFiles(); // UseDefaultFiles tem que ficar antes de UseStaticFiles
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            /* https://www.site.com.br -> Qual controlador (o controlador faz a gestão)? Quem define são as rotas
+             * https://www.site.com.br/Controller/Action/?id
+             * Exemplo: https://www.site.com.br/Produto/Visualizar/102
+             * Exemplo: https://www.site.com.br/Produto/Visualizar/MouseRazorZK (nome em vez de id)
+             * Exemplo: https://www.site.com.br/Produto/Visualizar/ (listagem de todos os produtos, por exemplo)
+             * 
+             * https://www.site.com.br/ = https://www.site.com.br/Home/ = https://www.site.com.br/Home/Index/
+             * https://www.site.com.br/Produto/ = https://www.site.com.br/Produto/Index
+             */
 
             app.UseMvc(routes =>
             {
