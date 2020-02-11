@@ -1,9 +1,11 @@
-﻿using System;
+﻿using LojaVirtual.Models;
+using LojaVirtual.Libraries.Email;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 
 namespace LojaVirtual.Controllers
 {
@@ -23,9 +25,13 @@ namespace LojaVirtual.Controllers
 
         public IActionResult ContatoConfirmado()
         {
-            string nome = HttpContext.Request.Form["nome"];
-            string email = HttpContext.Request.Form["email"];
-            string texto = HttpContext.Request.Form["texto"];
+            Contato contato = new Contato();
+
+            contato.Nome = HttpContext.Request.Form["nome"];
+            contato.Email = HttpContext.Request.Form["email"];
+            contato.Texto = HttpContext.Request.Form["texto"];
+
+            ContatoEmail.EnviarContatoPorEmail(contato);
 
             StringBuilder sb = new StringBuilder();
 
@@ -33,13 +39,13 @@ namespace LojaVirtual.Controllers
             sb.AppendLine("Conteúdo:");
             sb.AppendLine();
             sb.Append("Nome: ");
-            sb.AppendLine(nome);
+            sb.AppendLine(contato.Nome);
             sb.AppendLine();
             sb.Append("E-mail: ");
-            sb.AppendLine(nome);
+            sb.AppendLine(contato.Email);
             sb.AppendLine();
             sb.Append("Texto: ");
-            sb.AppendLine(nome);
+            sb.AppendLine(contato.Texto);
             sb.AppendLine();
 
             return new ContentResult() { Content = sb.ToString() };
