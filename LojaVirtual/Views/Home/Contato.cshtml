@@ -1,6 +1,7 @@
 ﻿
 @{
     ViewData["Title"] = "Contato";
+    LojaVirtual.Models.Contato contato = (LojaVirtual.Models.Contato)ViewData["CONTATO"];
 }
 
 <main role="main">
@@ -38,7 +39,16 @@
 
                     <article class="card">
                         <div class="card-body p-5">
-                            <p class="alert alert-success">Mensagem de sucesso!</p>
+
+                            @if (ViewData["MSG_SUCESSO"] != null)
+                            {
+                                <p class="alert alert-success">@ViewData["MSG_SUCESSO"]</p>
+                            }
+                            else if (ViewData["MSG_ERRO"] != null)
+                            {
+                                <p class="alert alert-danger">@Html.Raw(ViewData["MSG_ERRO"])</p>
+                                <!-- Raw serve para passar html puro na string, assim pude usar <br /> para quebra de linha entre uma mensagem e outra -->
+                            }
 
                             <form role="form" method="post" action="/Home/ContatoConfirmado">
                                 <div class="form-group">
@@ -47,7 +57,8 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fa fa-user"></i></span>
                                         </div>
-                                        <input type="text" id="nome" class="form-control" name="nome" placeholder="" required="">
+                                        <input type="text" id="nome" class="form-control" name="nome" placeholder=""
+                                               required="" value="@(contato != null ? contato.Nome : string.Empty)">
                                     </div> <!-- input-group.// -->
                                 </div> <!-- form-group.// -->
 
@@ -57,7 +68,8 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fa fa-at"></i></span>
                                         </div>
-                                        <input type="text" id="email" class="form-control" name="email" placeholder="" required="">
+                                        <input type="text" id="email" class="form-control" name="email" placeholder=""
+                                               required="" value="@(contato != null ? contato.Email : string.Empty)">
                                     </div> <!-- input-group.// -->
                                 </div> <!-- form-group.// -->
 
@@ -66,8 +78,7 @@
                                         <div class="form-group">
                                             <label for="texto"><span class="hidden-xs">Texto</span> </label>
                                             <div class="form-inline">
-                                                <textarea class="form-control" name="texto" id="texto" style="width:100%"></textarea>
-
+                                                <textarea class="form-control" name="texto" id="texto" style="width:100%">@(contato != null ? contato.Texto : string.Empty)</textarea>
                                             </div>
                                         </div>
                                     </div>

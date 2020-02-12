@@ -3,6 +3,7 @@ using LojaVirtual.Libraries.Email;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,12 @@ namespace LojaVirtual.Controllers
 {
     public class HomeController : Controller
     {
+        // CONSTANTES
+        private const string MSG_SUCESSO = "Mensagem de contato enviada com sucesso!";
+        private const string MSG_ERRO = "Opa! Aconteceu um erro inesperado! Tente novamente mais tarde...";
+
+        // ACTIONS
+
         // GET
         public IActionResult Index()
         {
@@ -25,30 +32,46 @@ namespace LojaVirtual.Controllers
 
         public IActionResult ContatoConfirmado()
         {
-            Contato contato = new Contato();
+            try
+            {
+                Contato contato = new Contato();
 
-            contato.Nome = HttpContext.Request.Form["nome"];
-            contato.Email = HttpContext.Request.Form["email"];
-            contato.Texto = HttpContext.Request.Form["texto"];
+                contato.Nome = HttpContext.Request.Form["nome"];
+                contato.Email = HttpContext.Request.Form["email"];
+                contato.Texto = HttpContext.Request.Form["texto"];
 
-            ContatoEmail.EnviarContatoPorEmail(contato);
+                var listaMensagens = new List<ValidationResult>();
+                var validationContext = new ValidationContext(contato);
+                bool isValid = Validator.TryValidateObject(contato, validationContext, listaMensagens, true);
 
-            StringBuilder sb = new StringBuilder();
+                if (isValid)
+                {
+                    ContatoEmail.EnviarContatoPorEmail(contato);
+                    ViewData["MSG_SUCESSO"] = MSG_SUCESSO;
+                }
+                else
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine("Houve erros no preenchimento de um ou mais campos: <br />");
 
-            sb.AppendLine("Dados recebidos com sucesso.");
-            sb.AppendLine("Conteúdo:");
-            sb.AppendLine();
-            sb.Append("Nome: ");
-            sb.AppendLine(contato.Nome);
-            sb.AppendLine();
-            sb.Append("E-mail: ");
-            sb.AppendLine(contato.Email);
-            sb.AppendLine();
-            sb.Append("Texto: ");
-            sb.AppendLine(contato.Texto);
-            sb.AppendLine();
+                    foreach(var mensagem in listaMensagens)
+                    {
+                        sb.AppendLine("- " + mensagem.ErrorMessage + "<br />");
+                    }
 
-            return new ContentResult() { Content = sb.ToString() };
+                    ViewData["MSG_ERRO"] = sb.ToString();
+                    ViewData["CONTATO"] = contato;
+                }
+            }
+            catch(Exception)
+            {
+                ViewData["MSG_ERRO"] = MSG_ERRO;
+
+                // TODO - Implementar Log
+                // TODO - Especificar Exceptions
+            }
+            
+            return View("Contato");
         }
 
         // GET
