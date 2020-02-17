@@ -184,10 +184,12 @@
              * @using (Html.BeginForm("Index", "Home", FormMethod.Post))
              *
              * @using (Html.BeginForm(null, null, null, FormMethod.Post, false, new { @action = "/Home/Index#formulario"}))
+             *
+             * @using (Html.BeginForm(null, null, FormMethod.Post, new { action = "#formulario" }))
              */
         }
 
-        @using (Html.BeginForm(null, null, null, FormMethod.Post, false, new { @action = Url.Action("Index", "Home") + "#formulario" }))
+        @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { @action = "#formulario" }))
         {
             <div class="container" id="formulario">
                 <div class="row">
