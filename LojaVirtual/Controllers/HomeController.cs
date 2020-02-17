@@ -1,4 +1,5 @@
-﻿using LojaVirtual.Models;
+﻿using LojaVirtual.Data;
+using LojaVirtual.Models;
 using LojaVirtual.Libraries.Email;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,9 +13,19 @@ namespace LojaVirtual.Controllers
 {
     public class HomeController : Controller
     {
+        // DEPENDÊNCIAS
+        private LojaVirtualContext _context;
+
         // CONSTANTES
         private const string MSG_SUCESSO = "Mensagem de contato enviada com sucesso!";
+        private const string MSG_SUCESSO_NEWSLETTER = "E-mail cadastrado com sucesso. Fique atento às nossas novidades!";
         private const string MSG_ERRO = "Opa! Aconteceu um erro inesperado! Tente novamente mais tarde...";
+
+        // CONSTRUTORES
+        public HomeController(LojaVirtualContext context)
+        {
+            _context = context;
+        }
 
         // ACTIONS
 
@@ -22,6 +33,26 @@ namespace LojaVirtual.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        // POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Index([FromForm] NewsletterEmail newsletterEmail) // Atribui o e-mail do form automaticamente a este objeto parâmetro no submit do form
+        {
+            if (ModelState.IsValid)
+            {
+                _context.NewsletterEmails.Add(newsletterEmail);
+                _context.SaveChanges();
+
+                TempData["MSG_SUCESSO_NEWSLETTER"] = MSG_SUCESSO_NEWSLETTER;
+
+                return RedirectToAction(nameof(Index)); // Qual a diferença? TempData funciona aqui, ViewData e ViewBag não
+            }
+            else
+            {
+                return View(); // Qual a diferença? ViewData e ViewBag são repassados aqui
+            }
         }
 
         // GET

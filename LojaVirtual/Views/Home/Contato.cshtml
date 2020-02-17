@@ -44,7 +44,7 @@
                             {
                                 <p class="alert alert-success">@ViewData["MSG_SUCESSO"]</p>
                             }
-                            else if (ViewData["MSG_ERRO"] != null)
+                            else if (ViewData["MSG_ERRO"] == null)
                             {
                                 <p class="alert alert-danger">@Html.Raw(ViewData["MSG_ERRO"])</p>
                                 <!-- Raw serve para passar html puro na string, assim pude usar <br /> para quebra de linha entre uma mensagem e outra -->
@@ -85,6 +85,7 @@
                                 </div> <!-- row.// -->
                                 <button class="subscribe btn btn-primary btn-block" type="submit"> Enviar </button>
                             </form>
+
                         </div> <!-- card-body.// -->
                     </article> <!-- card.// -->
 
