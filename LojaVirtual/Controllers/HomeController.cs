@@ -1,6 +1,8 @@
 ﻿using LojaVirtual.Data;
-using LojaVirtual.Models;
 using LojaVirtual.Libraries.Email;
+using LojaVirtual.Models;
+using LojaVirtual.Models.Repositories;
+using LojaVirtual.Models.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,17 +16,20 @@ namespace LojaVirtual.Controllers
     public class HomeController : Controller
     {
         // DEPENDÊNCIAS
-        private LojaVirtualContext _context;
+        private readonly IClienteRepository _clienteRepository;
+        private readonly INewsletterEmailRepository _newsletterEmailRepository;
 
         // CONSTANTES
-        private const string MSG_SUCESSO = "Mensagem de contato enviada com sucesso!";
+        private const string MSG_SUCESSO_CONTATO = "Mensagem de contato enviada com sucesso!";
         private const string MSG_SUCESSO_NEWSLETTER = "E-mail cadastrado com sucesso. Fique atento às nossas novidades!";
+        private const string MSG_SUCESSO_CADASTRO = "Cadastro realizado com sucesso!";
         private const string MSG_ERRO = "Opa! Aconteceu um erro inesperado! Tente novamente mais tarde...";
 
-        // CONSTRUTORES
-        public HomeController(LojaVirtualContext context)
+        // CONSTRUTOR
+        public HomeController(IClienteRepository clienteRepository, INewsletterEmailRepository newsletterEmailRepository)
         {
-            _context = context;
+            _clienteRepository = clienteRepository;
+            _newsletterEmailRepository = newsletterEmailRepository;
         }
 
         // ACTIONS
@@ -42,10 +47,9 @@ namespace LojaVirtual.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.NewsletterEmails.Add(newsletterEmail);
-                _context.SaveChanges();
+                _newsletterEmailRepository.CadastrarNewsletterEmail(newsletterEmail);
 
-                TempData["MSG_SUCESSO_NEWSLETTER"] = MSG_SUCESSO_NEWSLETTER;
+                TempData["MSG_SUCESSO"] = MSG_SUCESSO_NEWSLETTER;
 
                 return RedirectToAction(nameof(Index)); // Qual a diferença? TempData funciona aqui, ViewData e ViewBag não
             }
@@ -78,7 +82,7 @@ namespace LojaVirtual.Controllers
                 if (isValid)
                 {
                     ContatoEmail.EnviarContatoPorEmail(contato);
-                    ViewData["MSG_SUCESSO"] = MSG_SUCESSO;
+                    ViewData["MSG_SUCESSO"] = MSG_SUCESSO_CONTATO;
                 }
                 else
                 {
@@ -114,6 +118,23 @@ namespace LojaVirtual.Controllers
         // GET
         public IActionResult CadastroCliente()
         {
+            return View();
+        }
+
+        // POST
+        [HttpPost]
+        public IActionResult CadastroCliente([FromForm]Cliente cliente)
+        {
+            if (ModelState.IsValid)
+            {
+                _clienteRepository.CadastrarCliente(cliente);
+
+                TempData["MSG_SUCESSO"] = MSG_SUCESSO_CADASTRO;
+
+                // TODO - Implementar redirecionamentos diferentes (Painel, Carrinho de Compras etc).
+
+                return RedirectToAction(nameof(CadastroCliente));
+            }
             return View();
         }
 

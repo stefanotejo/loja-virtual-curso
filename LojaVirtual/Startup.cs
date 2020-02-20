@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LojaVirtual.Data;
+using LojaVirtual.Models.Repositories;
+using LojaVirtual.Models.Repositories.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -39,6 +41,10 @@ namespace LojaVirtual
 
             services.AddDbContext<LojaVirtualContext>(options => options.UseSqlServer(Configuration.GetConnectionString("LojaVirtualContext")));
             // A string de conexão está sendo pega do appsettings.json (através do Configuration.GetConnectionString)
+
+            // Repositórios (Padrão Repository)
+            services.AddScoped<IClienteRepository, ClienteRepository>();
+            services.AddScoped<INewsletterEmailRepository, NewsletterEmailRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

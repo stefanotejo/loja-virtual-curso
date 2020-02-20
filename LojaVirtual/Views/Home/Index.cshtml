@@ -1,4 +1,4 @@
-﻿@model LojaVirtual.Models.NewsletterEmail
+﻿@model NewsletterEmail
 
 @{
     ViewData["Title"] = "Index";
@@ -193,10 +193,10 @@
         {
             <div class="container" id="formulario">
                 <div class="row">
-                    <div class="col-sm-6 offset-sm-2">
-                        @if (TempData["MSG_SUCESSO_NEWSLETTER"] != null)
+                    <div class="col-sm-8 offset-sm-2">
+                        @if (TempData["MSG_SUCESSO"] != null)
                         {
-                            <p class="alert alert-success">@TempData["MSG_SUCESSO_NEWSLETTER"]</p>
+                            <p class="alert alert-success">@TempData["MSG_SUCESSO"]</p>
                         }
                     </div>
                 </div>
@@ -214,7 +214,7 @@
                             <span style="color: red" ;>@Html.ValidationMessageFor(model => model.Email)</span>
                         </div> <!-- form-group.// -->
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-2" style="padding: 7px 15px 0px 15px">
                         <br />
                         <button class="subscribe btn btn-primary btn-block" type="submit"> Cadastrar </button>
                     </div>
